@@ -2,34 +2,71 @@ package foi.air.szokpt.transfetch.entities;
 
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
+import java.util.List;
 
+@Entity
+@Table(name = "mids")
 public class Mid {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     @Column(name = "pos_mid")
     private String posMid;
 
     @Column(name = "sale_point_name")
     private String salePointName;
 
-    @Column(name = "city")
-    private String city;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "merchant_id")
+    private Merchant merchant;
 
-    @Column(name = "state_code")
-    private String stateCode;
+    @OneToMany(mappedBy = "mid", fetch = FetchType.LAZY)
+    private List<Tid> tids;
 
-    @Column(name = "type_code")
-    private String typeCode;
+    public Mid() {
+    }
 
-    @Column(name = "location_code")
-    private String locationCode;
+    public Mid(String posMid, String salePointName) {
+        this.posMid = posMid;
+        this.salePointName = salePointName;
+    }
 
-    @Column(name = "postal_code")
-    private String postalCode;
+    public Integer getId() {
+        return id;
+    }
 
-    @Column(name = "country_code")
-    private String countryCode;
+    public String getPosMid() {
+        return posMid;
+    }
 
-    @Column(name = "security_code")
-    private String securityCode;
+    public void setPosMid(String posMid) {
+        this.posMid = posMid;
+    }
+
+    public String getSalePointName() {
+        return salePointName;
+    }
+
+    public void setSalePointName(String salePointName) {
+        this.salePointName = salePointName;
+    }
+
+    public Merchant getMerchant() {
+        return merchant;
+    }
+
+    public void setMerchant(Merchant merchant) {
+        this.merchant = merchant;
+    }
+
+    public List<Tid> getTids() {
+        return tids;
+    }
+
+    public void addTid(Tid tid) {
+        tids.add(tid);
+        tid.setMid(this);
+    }
 }
