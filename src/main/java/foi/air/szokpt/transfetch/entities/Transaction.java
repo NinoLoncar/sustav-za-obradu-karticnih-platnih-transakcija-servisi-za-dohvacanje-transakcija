@@ -1,5 +1,7 @@
 package foi.air.szokpt.transfetch.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import foi.air.szokpt.transfetch.enums.CardBrand;
 import foi.air.szokpt.transfetch.enums.InstallmentsCreditor;
 import foi.air.szokpt.transfetch.enums.TrxType;
@@ -7,18 +9,21 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "transactions")
 public class Transaction {
     @Id
     @Column(name = "guid")
-    private String guid;
+    private UUID guid;
 
     @Column(name = "host_tid")
+    @JsonProperty("host_tid")
     private String hostTid;
 
     @Column(name = "host_mid")
+    @JsonProperty("host_mid")
     private String hostMid;
 
     @Column(name = "amount")
@@ -28,42 +33,55 @@ public class Transaction {
     private String currency;
 
     @Column(name = "trx_type")
+    @JsonProperty("trx_type")
     private TrxType trxType;
 
     @Column(name = "installments_number")
+    @JsonProperty("installments_number")
     private int installmentsNumber;
 
     @Column(name = "installments_creditor")
+    @JsonProperty("installments_creditor")
     private InstallmentsCreditor installmentsCreditor;
 
     @Column(name = "bank_host_id")
+    @JsonProperty("bank_host_id")
     private int bankHostId;
 
     @Column(name = "card_brand")
+    @JsonProperty("card_brand")
     private CardBrand cardBrand;
 
     @Column(name = "transaction_timestamp")
+    @JsonProperty("transaction_timestamp")
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm:ss")
     private LocalDateTime transactionTimestamp;
 
-    @Column(name = "masked_pin")
-    private String maskedPin;
+    @Column(name = "masked_pan")
+    @JsonProperty("masked_pan")
+    private String maskedPan;
 
     @Column(name = "pin_used")
+    @JsonProperty("pin_used")
     private boolean pinUsed;
 
     @Column(name = "response_code")
+    @JsonProperty("response_code")
     private String responseCode;
 
     @Column(name = "approval_code")
+    @JsonProperty("approval_code")
     private String approvalCode;
 
     @Column(name = "rrn")
     private String rrn;
 
     @Column(name = "emv_1")
+    @JsonProperty("emv_1")
     private String emv1;
 
     @Column(name = "emv_2")
+    @JsonProperty("emv_2")
     private String emv2;
 
     @Column(name = "psn")
@@ -76,7 +94,7 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(String guid, String hostTid, String hostMid, BigDecimal amount, String currency, TrxType trxType, int installmentsNumber, InstallmentsCreditor installmentsCreditor, int bankHostId, CardBrand cardBrand, LocalDateTime transactionTimestamp, String maskedPin, boolean pinUsed, String responseCode, String approvalCode, String rrn, String emv1, String emv2, String psn) {
+    public Transaction(UUID guid, String hostTid, String hostMid, BigDecimal amount, String currency, TrxType trxType, int installmentsNumber, InstallmentsCreditor installmentsCreditor, int bankHostId, CardBrand cardBrand, LocalDateTime transactionTimestamp, String maskedPan, boolean pinUsed, String responseCode, String approvalCode, String rrn, String emv1, String emv2, String psn) {
         this.guid = guid;
         this.hostTid = hostTid;
         this.hostMid = hostMid;
@@ -88,7 +106,7 @@ public class Transaction {
         this.bankHostId = bankHostId;
         this.cardBrand = cardBrand;
         this.transactionTimestamp = transactionTimestamp;
-        this.maskedPin = maskedPin;
+        this.maskedPan = maskedPan;
         this.pinUsed = pinUsed;
         this.responseCode = responseCode;
         this.approvalCode = approvalCode;
@@ -98,11 +116,11 @@ public class Transaction {
         this.psn = psn;
     }
 
-    public String getGuid() {
+    public UUID getGuid() {
         return guid;
     }
 
-    public void setGuid(String guid) {
+    public void setGuid(UUID guid) {
         this.guid = guid;
     }
 
@@ -186,12 +204,12 @@ public class Transaction {
         this.transactionTimestamp = transactionTimestamp;
     }
 
-    public String getMaskedPin() {
-        return maskedPin;
+    public String getMaskedPan() {
+        return maskedPan;
     }
 
-    public void setMaskedPin(String maskedPin) {
-        this.maskedPin = maskedPin;
+    public void setMaskedPan(String maskedPan) {
+        this.maskedPan = maskedPan;
     }
 
     public boolean isPinUsed() {
