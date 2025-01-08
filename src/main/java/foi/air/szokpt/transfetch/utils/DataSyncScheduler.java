@@ -5,15 +5,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Scheduler {
+public class DataSyncScheduler {
     private final DataFetchService dataFetchService;
 
-    public Scheduler(DataFetchService fetchService) {
+    public DataSyncScheduler(DataFetchService fetchService) {
         this.dataFetchService = fetchService;
     }
 
-    //@Scheduled(cron = "0 0 1,13 * * ?", zone = "Europe/Zagreb")
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(cron = "0 0 0,12 * * ?", zone = "Europe/Zagreb")
     public void periodicDataFetch() {
         dataFetchService.synchronizeData();
     }
