@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DataFetchService {
@@ -45,7 +46,6 @@ public class DataFetchService {
     private List<Tid> fetchTids() {
         String url = baseUrl + "/tids";
         ResponseEntity<TidsResponse> response = restTemplate.getForEntity(url, TidsResponse.class);
-
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
             return response.getBody().getTids();
         } else {
@@ -56,7 +56,6 @@ public class DataFetchService {
     private Mid fetchMidByTid(String tid) {
         String url = baseUrl + "/merchants/midBTid?tid=" + tid;
         ResponseEntity<MidResponse> response = restTemplate.getForEntity(url, MidResponse.class);
-
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
             return response.getBody().getMid();
         } else {
@@ -67,12 +66,9 @@ public class DataFetchService {
     private Merchant fetchMerchantByMid(String mid) {
         String url = baseUrl + "/merchants/merchantByMid?mid=" + mid;
         ResponseEntity<MerchantResponse> response = restTemplate.getForEntity(url, MerchantResponse.class);
-
-        if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            return response.getBody().getMerchant();
-        } else {
-            return null;
-        }
+        return Optional.ofNullable(response.getBody())
+                .map(MerchantResponse::getMerchant)
+                .orElse(null);
     }
 
     public void fetchData() {
