@@ -60,7 +60,6 @@ public class Mid {
         this.salePointName = salePointName;
     }
 
-    // Getters and Setters
     public String getPosMid() {
         return posMid;
     }

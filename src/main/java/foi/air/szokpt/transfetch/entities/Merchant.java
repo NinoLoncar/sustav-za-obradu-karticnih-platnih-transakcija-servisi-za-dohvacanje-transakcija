@@ -1,5 +1,6 @@
 package foi.air.szokpt.transfetch.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,15 +14,18 @@ public class Merchant {
     private Integer id;
 
     @Column(name = "name")
+    @JsonProperty("name")
     private String name;
 
     @Column(name = "oib")
+    @JsonProperty("oib")
     private String oib;
 
     @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY)
     private List<Mid> mids;
 
-    public Merchant() {}
+    public Merchant() {
+    }
 
     public Merchant(String name, String oib) {
         this.name = name;

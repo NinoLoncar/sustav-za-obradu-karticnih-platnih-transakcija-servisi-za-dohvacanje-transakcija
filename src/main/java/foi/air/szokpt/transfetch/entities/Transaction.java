@@ -27,9 +27,11 @@ public class Transaction {
     private String hostMid;
 
     @Column(name = "amount")
+    @JsonProperty("amount")
     private BigDecimal amount;
 
     @Column(name = "currency")
+    @JsonProperty("currency")
     private String currency;
 
     @Column(name = "trx_type")
@@ -74,6 +76,7 @@ public class Transaction {
     private String approvalCode;
 
     @Column(name = "rrn")
+    @JsonProperty("rnn")
     private String rrn;
 
     @Column(name = "emv_1")
@@ -85,6 +88,7 @@ public class Transaction {
     private String emv2;
 
     @Column(name = "psn")
+    @JsonProperty("psn")
     private String psn;
 
     @ManyToOne(fetch = FetchType.LAZY)

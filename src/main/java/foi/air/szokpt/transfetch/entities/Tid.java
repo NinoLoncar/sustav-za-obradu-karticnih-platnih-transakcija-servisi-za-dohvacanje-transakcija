@@ -14,6 +14,7 @@ public class Tid {
     private String posTid;
 
     @Column(name = "mcc")
+    @JsonProperty("mcc")
     private String mcc;
 
     @ManyToOne(fetch = FetchType.LAZY)
