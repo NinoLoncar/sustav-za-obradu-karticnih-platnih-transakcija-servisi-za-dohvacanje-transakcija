@@ -43,6 +43,22 @@ public class DataFetchService {
         this.transactionRepository = transactionRepository;
     }
 
+    public void synchronizeData() {
+        List<Tid> tids = fetchTids();
+
+        tids.forEach(tid -> {
+            Mid mid = fetchMidByTid(tid.getPosTid());
+            if (mid != null) {
+                Merchant merchant = fetchMerchantByMid(mid.getPosMid());
+                if (merchant != null) {
+                    Merchant savedMerchant = saveMerchant(merchant);
+                    Mid savedMid = saveMid(mid, savedMerchant);
+                    saveTid(tid, savedMid);
+                }
+            }
+        });
+    }
+
     private List<Tid> fetchTids() {
         String url = baseUrl + "/tids";
         ResponseEntity<TidsResponse> response = restTemplate.getForEntity(url, TidsResponse.class);
@@ -71,26 +87,21 @@ public class DataFetchService {
                 .orElse(null);
     }
 
-    public void fetchData() {
-        List<Tid> tids = fetchTids();
-        for (Tid tid : tids) {
-            Mid mid = fetchMidByTid(tid.getPosTid());
-            if (mid != null) {
-                Merchant merchant = fetchMerchantByMid(mid.getPosMid());
-                if (merchant != null) {
-                    Merchant finalMerchant = merchant;
-                    merchant = merchantRepository.findByOib(merchant.getOib())
-                            .orElseGet(() -> merchantRepository.save(finalMerchant));
-                    mid.setMerchant(merchant);
-                    Mid finalMid = mid;
-                    mid = midRepository.findById(mid.getPosMid())
-                            .orElseGet(() -> midRepository.save(finalMid));
-                    tid.setMid(mid);
-                    if (!tidRepository.existsById(tid.getPosTid())) {
-                        tidRepository.save(tid);
-                    }
-                }
-            }
+    private Merchant saveMerchant(Merchant merchant) {
+        return merchantRepository.findByOib(merchant.getOib())
+                .orElseGet(() -> merchantRepository.save(merchant));
+    }
+
+    private Mid saveMid(Mid mid, Merchant merchant) {
+        mid.setMerchant(merchant);
+        return midRepository.findById(mid.getPosMid())
+                .orElseGet(() -> midRepository.save(mid));
+    }
+
+    private void saveTid(Tid tid, Mid mid) {
+        tid.setMid(mid);
+        if (!tidRepository.existsById(tid.getPosTid())) {
+            tidRepository.save(tid);
         }
     }
 }
