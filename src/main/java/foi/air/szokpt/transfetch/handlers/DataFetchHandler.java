@@ -38,21 +38,24 @@ public class DataFetchHandler {
 
     public void fetchData() {
         List<Tid> tids = apiClient.fetchTids();
-        tids.forEach(tid -> {
+        for (Tid tid : tids) {
             Mid mid = apiClient.fetchMidByTid(tid.getPosTid());
-            if (mid != null) {
-                Merchant merchant = apiClient.fetchMerchantByMid(mid.getPosMid());
-                if (merchant != null) {
-                    Merchant savedMerchant = merchantService.saveMerchant(merchant);
-                    Mid savedMid = midService.saveMid(mid, savedMerchant);
-                    Tid savedTid = tidService.saveTid(tid, savedMid);
-                    List<Transaction> transactions = apiClient.fetchTransactionsByTid(savedTid.getPosTid());
-                    transactions = transactions.stream()
-                            .filter(transaction -> transaction.getCardBrand() != CardBrand.UNKNOWN)
-                            .toList();
-                    transactionService.saveTransactions(transactions, savedTid);
-                }
-            }
-        });
+            if (mid == null) continue;
+
+            Merchant merchant = apiClient.fetchMerchantByMid(mid.getPosMid());
+            if (merchant == null) continue;
+
+            Merchant savedMerchant = merchantService.saveMerchant(merchant);
+            Mid savedMid = midService.saveMid(mid, savedMerchant);
+            Tid savedTid = tidService.saveTid(tid, savedMid);
+
+            List<Transaction> transactions = apiClient.fetchTransactionsByTid(savedTid.getPosTid());
+            List<Transaction> validTransactions = transactions.stream()
+                    .filter(transaction -> transaction.getCardBrand() != CardBrand.UNKNOWN)
+                    .toList();
+
+            transactionService.saveTransactions(validTransactions, savedTid);
+        }
     }
+
 }
