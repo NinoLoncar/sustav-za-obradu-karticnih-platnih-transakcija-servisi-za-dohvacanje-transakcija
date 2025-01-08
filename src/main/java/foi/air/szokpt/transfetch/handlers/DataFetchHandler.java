@@ -5,6 +5,7 @@ import foi.air.szokpt.transfetch.entities.Merchant;
 import foi.air.szokpt.transfetch.entities.Mid;
 import foi.air.szokpt.transfetch.entities.Tid;
 import foi.air.szokpt.transfetch.entities.Transaction;
+import foi.air.szokpt.transfetch.enums.CardBrand;
 import foi.air.szokpt.transfetch.services.MerchantService;
 import foi.air.szokpt.transfetch.services.MidService;
 import foi.air.szokpt.transfetch.services.TidService;
@@ -46,6 +47,9 @@ public class DataFetchHandler {
                     Mid savedMid = midService.saveMid(mid, savedMerchant);
                     Tid savedTid = tidService.saveTid(tid, savedMid);
                     List<Transaction> transactions = apiClient.fetchTransactionsByTid(savedTid.getPosTid());
+                    transactions = transactions.stream()
+                            .filter(transaction -> transaction.getCardBrand() != CardBrand.UNKNOWN)
+                            .toList();
                     transactionService.saveTransactions(transactions, savedTid);
                 }
             }
