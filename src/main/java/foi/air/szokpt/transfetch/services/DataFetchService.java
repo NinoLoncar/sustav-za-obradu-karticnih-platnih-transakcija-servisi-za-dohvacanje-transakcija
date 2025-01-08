@@ -3,9 +3,11 @@ package foi.air.szokpt.transfetch.services;
 import foi.air.szokpt.transfetch.dtos.responses.MerchantResponse;
 import foi.air.szokpt.transfetch.dtos.responses.MidResponse;
 import foi.air.szokpt.transfetch.dtos.responses.TidsResponse;
+import foi.air.szokpt.transfetch.dtos.responses.TransactionsResponse;
 import foi.air.szokpt.transfetch.entities.Merchant;
 import foi.air.szokpt.transfetch.entities.Mid;
 import foi.air.szokpt.transfetch.entities.Tid;
+import foi.air.szokpt.transfetch.entities.Transaction;
 import foi.air.szokpt.transfetch.repositories.MerchantRepository;
 import foi.air.szokpt.transfetch.repositories.MidRepository;
 import foi.air.szokpt.transfetch.repositories.TidRepository;
@@ -15,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +49,6 @@ public class DataFetchService {
 
     public void synchronizeData() {
         List<Tid> tids = fetchTids();
-
         tids.forEach(tid -> {
             Mid mid = fetchMidByTid(tid.getPosTid());
             if (mid != null) {
@@ -53,7 +56,10 @@ public class DataFetchService {
                 if (merchant != null) {
                     Merchant savedMerchant = saveMerchant(merchant);
                     Mid savedMid = saveMid(mid, savedMerchant);
-                    saveTid(tid, savedMid);
+                    Tid savedTid = saveTid(tid, savedMid);
+
+                    List<Transaction> transactions = fetchTransactionsByTid(savedTid.getPosTid());
+                    transactions.forEach(transaction -> saveTransaction(transaction, savedTid));
                 }
             }
         });
@@ -87,6 +93,16 @@ public class DataFetchService {
                 .orElse(null);
     }
 
+    private List<Transaction> fetchTransactionsByTid(String tid) {
+        String date = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String url = baseUrl + "/transactions/" + tid + "?date=" + date;
+        ResponseEntity<TransactionsResponse> response = restTemplate.getForEntity(url, TransactionsResponse.class);
+
+        return Optional.ofNullable(response.getBody())
+                .map(TransactionsResponse::getTransactions)
+                .orElse(new ArrayList<>());
+    }
+
     private Merchant saveMerchant(Merchant merchant) {
         return merchantRepository.findByOib(merchant.getOib())
                 .orElseGet(() -> merchantRepository.save(merchant));
@@ -98,10 +114,16 @@ public class DataFetchService {
                 .orElseGet(() -> midRepository.save(mid));
     }
 
-    private void saveTid(Tid tid, Mid mid) {
+    private Tid saveTid(Tid tid, Mid mid) {
         tid.setMid(mid);
-        if (!tidRepository.existsById(tid.getPosTid())) {
-            tidRepository.save(tid);
+        return tidRepository.findById(tid.getPosTid())
+                .orElseGet(() -> tidRepository.save(tid));
+    }
+
+    private void saveTransaction(Transaction transaction, Tid tid) {
+        if (!transactionRepository.existsById(transaction.getGuid())) {
+            transaction.setTid(tid);
+            transactionRepository.save(transaction);
         }
     }
 }
