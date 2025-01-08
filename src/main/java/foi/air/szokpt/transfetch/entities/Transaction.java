@@ -36,6 +36,7 @@ public class Transaction {
 
     @Column(name = "trx_type")
     @JsonProperty("trx_type")
+    @Enumerated(EnumType.STRING)
     private TrxType trxType;
 
     @Column(name = "installments_number")
@@ -44,6 +45,7 @@ public class Transaction {
 
     @Column(name = "installments_creditor")
     @JsonProperty("installments_creditor")
+    @Enumerated(EnumType.STRING)
     private InstallmentsCreditor installmentsCreditor;
 
     @Column(name = "bank_host_id")
@@ -52,6 +54,7 @@ public class Transaction {
 
     @Column(name = "card_brand")
     @JsonProperty("card_brand")
+    @Enumerated(EnumType.STRING)
     private CardBrand cardBrand;
 
     @Column(name = "transaction_timestamp")
@@ -76,7 +79,7 @@ public class Transaction {
     private String approvalCode;
 
     @Column(name = "rrn")
-    @JsonProperty("rnn")
+    @JsonProperty("rrn")
     private String rrn;
 
     @Column(name = "emv_1")
