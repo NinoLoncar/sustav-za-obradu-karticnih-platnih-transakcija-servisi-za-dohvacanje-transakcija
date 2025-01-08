@@ -13,7 +13,7 @@ public class DataFetchScheduler {
     }
 
     @Scheduled(cron = "0 0 0,12 * * ?", zone = "Europe/Zagreb")
-    public void periodicDataSync() {
+    public void periodicDataFetch() {
         dataFetchHandler.fetchData();
     }
 }
