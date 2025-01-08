@@ -1,5 +1,6 @@
 package foi.air.szokpt.transfetch.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 @Table(name = "tids")
 public class Tid {
     @Id
+    @JsonProperty("pos_tid")
     @Column(name = "pos_tid")
     private String posTid;
 
@@ -15,7 +17,7 @@ public class Tid {
     private String mcc;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mid_id")
+    @JoinColumn(name = "pos_mid")
     private Mid mid;
 
     @OneToMany(mappedBy = "tid", fetch = FetchType.LAZY)
