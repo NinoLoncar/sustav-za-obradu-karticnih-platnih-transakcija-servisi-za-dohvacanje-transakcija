@@ -1,5 +1,7 @@
 package foi.air.szokpt.transfetch.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -45,11 +47,13 @@ public class Mid {
     @JsonProperty("security_code")
     private String securityCode;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "merchant_id")
     private Merchant merchant;
 
-    @OneToMany(mappedBy = "mid", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "mid", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Tid> tids;
 
     public Mid() {

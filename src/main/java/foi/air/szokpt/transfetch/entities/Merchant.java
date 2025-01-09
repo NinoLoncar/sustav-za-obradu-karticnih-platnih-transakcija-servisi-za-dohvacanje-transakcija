@@ -1,5 +1,6 @@
 package foi.air.szokpt.transfetch.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -21,7 +22,8 @@ public class Merchant {
     @JsonProperty("oib")
     private String oib;
 
-    @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "merchant", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Mid> mids;
 
     public Merchant() {

@@ -1,5 +1,6 @@
 package foi.air.szokpt.transfetch.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import foi.air.szokpt.transfetch.enums.CardBrand;
@@ -94,7 +95,8 @@ public class Transaction {
     @JsonProperty("psn")
     private String psn;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "pos_tid")
     private Tid tid;
 

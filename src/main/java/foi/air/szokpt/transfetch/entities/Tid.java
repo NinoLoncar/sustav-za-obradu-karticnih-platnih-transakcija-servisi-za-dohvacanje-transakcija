@@ -1,5 +1,7 @@
 package foi.air.szokpt.transfetch.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -17,11 +19,13 @@ public class Tid {
     @JsonProperty("mcc")
     private String mcc;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonBackReference
     @JoinColumn(name = "pos_mid")
     private Mid mid;
 
-    @OneToMany(mappedBy = "tid", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tid", fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<Transaction> transactions;
 
     public Tid() {
@@ -58,6 +62,14 @@ public class Tid {
 
     public List<Transaction> getTransactions() {
         return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transaction) {
+        this.transactions.clear();
+        for (Transaction t : transaction) {
+            t.setTid(this);
+            this.transactions.add(t);
+        }
     }
 
     public void addTransaction(Transaction transaction) {
