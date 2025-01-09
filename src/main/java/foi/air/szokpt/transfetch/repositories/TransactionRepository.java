@@ -1,6 +1,5 @@
 package foi.air.szokpt.transfetch.repositories;
 
-import foi.air.szokpt.transfetch.entities.Tid;
 import foi.air.szokpt.transfetch.entities.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,9 +12,9 @@ import java.util.UUID;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
-    @Query("SELECT t FROM Transaction t WHERE t.tid = :tid AND t.transactionTimestamp BETWEEN :startOfDay AND :endOfDay")
-    List<Transaction> findByTidAndTransactionTimestamp(
-            @Param("tid") Tid tid,
-            @Param("startOfDay") LocalDateTime startOfDay,
-            @Param("endOfDay") LocalDateTime endOfDay);
+    @Query("SELECT t FROM Transaction t WHERE t.transactionTimestamp >= :startOfDay AND" +
+            " t.transactionTimestamp < :endOfDay AND t.tid.posTid = :posTid")
+    List<Transaction> findByTidAndTimestamp(@Param("posTid") String posTid,
+                                            @Param("startOfDay") LocalDateTime startOfDay,
+                                            @Param("endOfDay") LocalDateTime endOfDay);
 }
