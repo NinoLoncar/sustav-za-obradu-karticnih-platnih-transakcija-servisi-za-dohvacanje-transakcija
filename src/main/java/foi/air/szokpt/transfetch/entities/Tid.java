@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import org.hibernate.Hibernate;
 
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -61,6 +63,9 @@ public class Tid {
     }
 
     public List<Transaction> getTransactions() {
+        if (!Hibernate.isInitialized(transactions)) {
+            return Collections.emptyList();
+        }
         return transactions;
     }
 
